@@ -1,0 +1,131 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name=claude:viewport-fit-sides content=cover><style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-right:env(safe-area-inset-right,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}</style><style>.md-table{overflow-x:auto}@media print{.md-table{overflow-x:visible}}</style><style>:root{color-scheme:light dark;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}}:root[data-theme="dark"]{color-scheme:dark;--md-bg:#0d0d0d;--md-text:rgba(255,255,255,.85);--md-muted:rgba(255,255,255,.6);--md-fill:rgba(255,255,255,.06);--md-fill-strong:rgba(255,255,255,.09);--md-rule:rgba(255,255,255,.14);--md-rule-strong:rgba(255,255,255,.22);--md-link:hsl(210 100% 72%)}:root[data-theme="light"]{color-scheme:light}@media print{:root,:root[data-theme="dark"]{color-scheme:light;--md-bg:#fff;--md-text:rgba(0,0,0,.8);--md-muted:rgba(0,0,0,.6);--md-fill:rgba(0,0,0,.04);--md-fill-strong:rgba(0,0,0,.06);--md-rule:rgba(0,0,0,.1);--md-rule-strong:rgba(0,0,0,.16);--md-link:hsl(210 100% 45%)}}body{background:var(--md-bg);color:var(--md-text);max-width:720px;margin:0 auto;padding:32px;display:flex;flex-direction:column;gap:10px;font:14px/1.55 -apple-system,BlinkMacSystemFont,'SF Pro','Segoe UI',sans-serif;overflow-wrap:break-word}body>:first-child{margin-top:0}h1,h2,h3,h4,h5,h6{margin:6px 0 0;line-height:1.25;font-weight:600;text-wrap:balance}h1{font-size:1.35em}h2{font-size:1.15em;color:var(--md-muted)}h3,h4,h5,h6{font-size:1em}p,ul,ol,blockquote,table,pre,hr{margin:0}strong{font-weight:600}a{color:var(--md-link);text-decoration:none}a:hover{text-decoration:underline}ul,ol{display:flex;flex-direction:column;gap:6px;padding-left:22px}ul{list-style:disc}ol{list-style:decimal}:is(li,td,th)>*+:is(p,ul,ol,blockquote){margin-top:6px}blockquote{display:flex;flex-direction:column;gap:10px;border-left:2px solid var(--md-rule);padding-left:10px;color:var(--md-muted)}:not(pre)>code{background:var(--md-fill);padding:1px 3px;border-radius:4px;font:.92em 'SF Mono',ui-monospace,Menlo,Consolas,monospace}a>code{background:none;color:inherit}pre{background:var(--md-fill);padding:10px 12px;border-radius:6px;overflow-x:auto;font:12px/1.5 'SF Mono',ui-monospace,Menlo,Consolas,monospace;margin-block:4px}pre code{background:none;padding:0;font:inherit}table{width:100%;border-collapse:separate;border-spacing:2px;font:inherit}th,td{padding:6px 8px;border-radius:3px;text-align:left;vertical-align:top}th{background:var(--md-fill-strong);font-weight:600}td{background:var(--md-fill)}:is(th,td) :not(pre)>code{background:transparent}hr{border:0;border-top:1px solid var(--md-rule-strong);margin-block:10px}img{max-width:100%;height:auto;border-radius:4px}</style>
+</head><body>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;limits.h&gt;
+#include &lt;float.h&gt;
+#ifdef _WIN32
+#include &lt;windows.h&gt;
+#endif
+
+/* Печать значения: десятичное + двоичное представление в нужном числе байтов */
+void pr(const char *name, long long dec, int bytes)
+{
+    unsigned int bits = (unsigned int)dec;   /* младшие байты = машинное представление */
+    printf(&#34;  %-18s = %12lld   &#34;, name, dec);
+    for (int b = bytes * 8 - 1; b &gt;= 0; b--)
+    {
+        printf(&#34;%d&#34;, (bits &gt;&gt; b) &amp; 1);
+        if (b % 8 == 0 &amp;&amp; b != 0) printf(&#34; &#34;);
+    }
+    printf(&#34;   (%d байт)\n&#34;, bytes);
+}
+
+/* Четыре «цепочки» преобразований из задания 3 */
+void chains(char c, unsigned char uc, int i, unsigned int ui)
+{
+    short s;
+    unsigned short us;
+    char c2;
+    unsigned char uc2;
+    int i2;
+    unsigned int ui2;
+
+    printf(&#34; Цепочка char -&gt; short int -&gt; int\n&#34;);
+    s = c;   i2 = s;
+    pr(&#34;char&#34;, c, 1);  pr(&#34;short int&#34;, s, 2);  pr(&#34;int&#34;, i2, 4);
+
+    printf(&#34; Цепочка unsigned char -&gt; unsigned short int -&gt; unsigned int\n&#34;);
+    us = uc; ui2 = us;
+    pr(&#34;unsigned char&#34;, uc, 1);  pr(&#34;unsigned short int&#34;, us, 2);  pr(&#34;unsigned int&#34;, ui2, 4);
+
+    printf(&#34; Цепочка int -&gt; short int -&gt; char\n&#34;);
+    s = i;   c2 = s;
+    pr(&#34;int&#34;, i, 4);  pr(&#34;short int&#34;, s, 2);  pr(&#34;char&#34;, c2, 1);
+
+    printf(&#34; Цепочка unsigned int -&gt; unsigned short int -&gt; unsigned char\n&#34;);
+    us = ui; uc2 = us;
+    pr(&#34;unsigned int&#34;, ui, 4);  pr(&#34;unsigned short int&#34;, us, 2);  pr(&#34;unsigned char&#34;, uc2, 1);
+}
+
+int main(void)
+{
+#ifdef _WIN32
+    SetConsoleOutputCP(65001);   /* русский текст в консоли (исходник в UTF-8) */
+    SetConsoleCP(65001);
+#endif
+
+    /* ================= ЗАДАНИЕ 1 ================= */
+    char c;  int i;  float f;  double d;
+
+    printf(&#34;=== ЗАДАНИЕ 1 ===\n&#34;);
+    /* 1.1 ввод каждой переменной отдельно + эхопечать */
+    printf(&#34;Введите символ (char): &#34;);     scanf(&#34; %c&#34;, &amp;c);   printf(&#34;Вы ввели: %c\n&#34;, c);
+    printf(&#34;Введите целое (int): &#34;);       scanf(&#34;%d&#34;, &amp;i);    printf(&#34;Вы ввели: %d\n&#34;, i);
+    printf(&#34;Введите вещественное (float): &#34;);   scanf(&#34;%f&#34;, &amp;f);   printf(&#34;Вы ввели: %f\n&#34;, f);
+    printf(&#34;Введите вещественное (double): &#34;);  scanf(&#34;%lf&#34;, &amp;d);  printf(&#34;Вы ввели: %lf\n&#34;, d);
+
+    /* 1.2 один printf с шириной поля и числом знаков после запятой */
+    printf(&#34;\n1.2 Вывод одним printf:\n&#34;);
+    printf(&#34;char=[%5c] int=[%8d] float=[%10.3f] double=[%12.5lf]\n&#34;, c, i, f, d);
+
+    /* 1.3 разные системы счисления */
+    printf(&#34;\n1.3 Системы счисления:\n&#34;);
+    printf(&#34;char : символ=%c  dec=%d  oct=%o  hex=%x\n&#34;, c, c, c, c);
+    printf(&#34;int  : dec=%d  oct=%o  hex=%x\n&#34;, i, i, i);
+    printf(&#34;float: %e\n&#34;, f);
+    printf(&#34;double: %e\n&#34;, d);
+
+    /* 1.4 sizeof */
+    printf(&#34;\n1.4 Размеры типов (байт):\n&#34;);
+    printf(&#34;char=%d  int=%d  float=%d  double=%d\n&#34;,
+           (int)sizeof(char), (int)sizeof(int), (int)sizeof(float), (int)sizeof(double));
+
+    /* ================= ЗАДАНИЕ 2 ================= */
+    printf(&#34;\n=== ЗАДАНИЕ 2 ===\n&#34;);
+    printf(&#34;CHAR_MIN=%d\t CHAR_MAX=%d\n&#34;, CHAR_MIN, CHAR_MAX);
+    printf(&#34;UCHAR_MAX=%u\n&#34;, UCHAR_MAX);
+    printf(&#34;SHRT_MIN=%d\t SHRT_MAX=%d\n&#34;, SHRT_MIN, SHRT_MAX);
+    printf(&#34;USHRT_MAX=%u\n&#34;, USHRT_MAX);
+    printf(&#34;INT_MIN=%d\t INT_MAX=%d\n&#34;, INT_MIN, INT_MAX);
+    printf(&#34;UINT_MAX=%u\n&#34;, UINT_MAX);
+    printf(&#34;FLT_MIN=%e\t FLT_MAX=%e\n&#34;, FLT_MIN, FLT_MAX);
+    printf(&#34;DBL_MIN=%e\t DBL_MAX=%e\n&#34;, DBL_MIN, DBL_MAX);
+
+    /* ================= ЗАДАНИЕ 3 ================= */
+    printf(&#34;\n=== ЗАДАНИЕ 3 ===\n&#34;);
+    printf(&#34;\nЭтап 1: максимальные значения\n&#34;);
+    chains(CHAR_MAX, UCHAR_MAX, INT_MAX, UINT_MAX);
+
+    printf(&#34;\nЭтап 2: минимальные значения (char, int)\n&#34;);
+    chains(CHAR_MIN, 0, INT_MIN, 0);
+
+    printf(&#34;\nЭтап 3: произвольные значения\n&#34;);
+    printf(&#34;-- значения 1: char=100, unsigned char=200, int=70000, unsigned int=70000\n&#34;);
+    chains(100, 200, 70000, 70000u);
+    printf(&#34;-- значения 2: char=-5, unsigned char=250, int=-70000, unsigned int=4000000000\n&#34;);
+    chains(-5, 250, -70000, 4000000000u);
+    printf(&#34;-- значения 3: char=-100, unsigned char=129, int=-1, unsigned int=65537\n&#34;);
+    chains(-100, 129, -1, 65537u);
+
+    /* ================= ЗАДАНИЕ 4 ================= */
+    printf(&#34;\n=== ЗАДАНИЕ 4 ===\n&#34;);
+    int si;  unsigned int ui;
+
+    si = INT_MAX;   printf(&#34;signed int MAX   = %d\n&#34;, si);
+    si = si + 1;    printf(&#34;signed int MAX+1 = %d\n&#34;, si);
+
+    ui = UINT_MAX;  printf(&#34;unsigned int MAX   = %u\n&#34;, ui);
+    ui = ui + 1;    printf(&#34;unsigned int MAX+1 = %u\n&#34;, ui);
+
+    si = INT_MIN;   printf(&#34;signed int MIN   = %d\n&#34;, si);
+    si = si - 1;    printf(&#34;signed int MIN-1 = %d\n&#34;, si);
+
+    ui = 0;         printf(&#34;unsigned int MIN   = %u\n&#34;, ui);
+    ui = ui - 1;    printf(&#34;unsigned int MIN-1 = %u\n&#34;, ui);
+
+    return 0;
+}
+
+</code></pre>
+
+</body></html>
